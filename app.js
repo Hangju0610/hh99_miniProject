@@ -10,7 +10,7 @@ app.use(express.json());
 app.use('/api', indexRouter);
 
 app.get('/', (req, res) => {
-  console.log('CICD test');
+  res.send('CICD 구축 완료');
 });
 
 app.listen(process.env.PORT, () => {
