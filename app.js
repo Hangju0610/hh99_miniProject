@@ -3,8 +3,16 @@ const express = require('express');
 const app = express();
 const indexRouter = require('./routes/indexRoutes.js');
 const env = require('dotenv');
+const cors = require('cors');
 env.config();
 
+app.use(
+  cors({
+    origin: '*',
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
+    credentials: true,
+  })
+);
 app.use(express.json());
 // app.use(cookieParser())
 app.use('/api', indexRouter);
