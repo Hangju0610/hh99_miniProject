@@ -24,7 +24,7 @@ router.get('/detail/:listId', async (req, res) => {
   try {
     const { listId } = req.params;
     // 1. 데이터 조회
-    const isExistList = await Lists.findOne({ where: { listId: numberId } });
+    const isExistList = await Lists.findOne({ where: { listId: listId } });
 
     // 1-1 데이터가 없는 경우 에러 출력
     if (!isExistList) {
