@@ -3,6 +3,7 @@ const express = require('express');
 const app = express();
 const indexRouter = require('./routes/indexRoutes.js');
 const env = require('dotenv');
+const morgan = require('morgan');
 const cors = require('cors');
 env.config();
 
@@ -20,6 +21,8 @@ app.use(
 );
 // test용
 // console.log(origin);
+
+app.use(morgan('dev'));
 
 app.use(express.json());
 // app.use(cookieParser())
