@@ -4,6 +4,7 @@ const router = express.Router();
 
 // List 전체 조회 
 router.get('', async (req, res) => {
+  console.log('List 전체 조회 API에 접속했습니다.')
   try {
     // 1. sequelize를 통해 전체 조회
     const items = await Lists.findAll({
@@ -18,11 +19,13 @@ router.get('', async (req, res) => {
 })
 
 // List 상세 페이지 조회
-router.get('/:listId', async (req, res) => {
+router.get('/detail/:listId', async (req, res) => {
+  console.log('List 상세 페이지 조회 API에 접속했습니다.')
   try {
-    const { listId } = req.params;
+    const { listId } = req.params; 
+    const numberId = Number(listId)
     // 1. 데이터 조회
-    const isExistList = await Lists.findOne({where: {listId}})
+    const isExistList = await Lists.findOne({where: {listId: numberId}})
 
     // 1-1 데이터가 없는 경우 에러 출력
     if (!isExistList) {
@@ -30,6 +33,8 @@ router.get('/:listId', async (req, res) => {
         return
     }
 
+    console.log(isExistList)
+    
     // 2. 데이터 손질
     // 3. response로 보내기
     res.status(200).json({list : isExistList});
@@ -43,6 +48,7 @@ router.get('/:listId', async (req, res) => {
 
 // List 생성
 router.post('', async (req, res) => {
+  console.log('List 생성 API에 접속했습니다.')
   const {title, content} = req.body
   try {
   // 1. req.body 데이터 유효성 검사
@@ -64,6 +70,7 @@ router.post('', async (req, res) => {
 
 // List 상세 페이지 수정
 router.put('/:listId', async (req, res) => {
+  console.log('List 상세 페이지 수정 API에 접속했습니다.')
   const {title, content} = req.body
   const {listId} = req.params
     try {
@@ -147,12 +154,6 @@ router.put('/:listId/isDone', async (req, res) => {
       res.status(404).json({ errorMessage: '없는 리스트입니다.'})
       return
     }
-
-    // 1-2 데이터 조회 시 isDone이 true인 경우 에러 처리 진행
-    // if (isExistList.isDone) {
-    //   res.status(400).json({ errorMessage: '이미 완료처리된 리스트입니다.'})
-    //   return
-    // }
 
     // 2. isDone 변수 설정
     const updatedisDone = !isExistList.isDone
