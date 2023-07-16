@@ -6,19 +6,20 @@ const env = require('dotenv');
 const cors = require('cors');
 env.config();
 
-console.log(process.env.origin)
+console.log(process.env.origin);
 
-const origin = process.env.ORIGIN
+const origin = process.env.ORIGIN;
 
 app.use(
-  cors({ // process.env 적용이 잘 안되어서 오류 발생
-    origin: origin,
+  cors({
+    // process.env 적용이 잘 안되어서 오류 발생
+    origin: '*',
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
     credentials: true,
   })
 );
 
-console.log(origin)
+console.log(origin);
 
 app.use(express.json());
 // app.use(cookieParser())
