@@ -109,7 +109,7 @@ router.put('/detail/:listId', async (req, res) => {
       res.status(200).json({ message: 'List 수정 완료!' });
     } else {
       res
-        .status(401)
+        .status(500)
         .json({ errorMessage: '리스트가 정상적으로 수정되지 않았습니다.' });
       return;
     }
@@ -140,7 +140,7 @@ router.delete('/:listId', async (req, res) => {
       res.status(200).json({ message: 'List 삭제 완료!' });
     } else {
       res
-        .status(401)
+        .status(500)
         .json({ errorMessage: '리스트가 정상적으로 삭제되지 않았습니다.' });
       return;
     }
@@ -176,7 +176,7 @@ router.put('/:listId/isDone', async (req, res) => {
     // 3. 리스트 상태변경 체크
     if (updatedResult[0] !== 1) {
       res
-        .status(401)
+        .status(500)
         .json({ errorMessage: '리스트 상태변경이 실패하였습니다.' });
     }
 
