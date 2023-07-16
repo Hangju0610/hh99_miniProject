@@ -19,6 +19,7 @@ router.get('', async (req, res) => {
 });
 
 // List 상세 페이지 조회
+// detail 페이지로 접근하기 위해 수정
 router.get('/detail/:listId', async (req, res) => {
   console.log('List 상세 페이지 조회 API에 접속했습니다.');
   try {
@@ -75,7 +76,7 @@ router.post('', async (req, res) => {
 });
 
 // List 상세 페이지 수정
-router.put('/:listId', async (req, res) => {
+router.put('/detail/:listId', async (req, res) => {
   console.log('List 상세 페이지 수정 API에 접속했습니다.');
   const { title, content } = req.body;
   const { listId } = req.params;

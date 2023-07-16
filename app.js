@@ -8,7 +8,7 @@ env.config();
 
 console.log(process.env.origin);
 
-const origin = process.env.ORIGIN;
+// const origin = process.env.ORIGIN;
 
 app.use(
   cors({
@@ -19,7 +19,7 @@ app.use(
   })
 );
 // test용
-console.log(origin);
+// console.log(origin);
 
 app.use(express.json());
 // app.use(cookieParser())
