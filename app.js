@@ -18,7 +18,7 @@ app.use(
     credentials: true,
   })
 );
-
+// test용
 console.log(origin);
 
 app.use(express.json());
