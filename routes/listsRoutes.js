@@ -6,13 +6,27 @@ const router = express.Router();
 router.get('', async (req, res) => {
   console.log('List 전체 조회 API에 접속했습니다.');
   try {
-    // 1. sequelize를 통해 전체 조회
+    // 1. page, pageSize 받기 via req.query
+    const page = parseInt(req.query.page) || 1
+    const pageSize = parseInt(req.query.pageSize) || 10
+    // 2. ToDolist 총 데이터 항목 수(totalDatas)
+    const totalDatas = await Lists.count()
+    // 3. 전체 페이지 수(totalPages)
+    const totalPages = Math.ceil(totalDatas / pageSize)
+
+    // 4. sequelize를 통해 전체 조회(LIMIT, OFFSET 적용)
     const items = await Lists.findAll({
-      // 2. 데이터 손질
+      // 5. 데이터 손질
       attributes: { exclude: ['content'] },
+      limit: pageSize,
+      offset: (page -1) * pageSize
     });
-    // 3. response로 보내기
-    res.status(200).json({ lists: items });
+    // 6. response로 보내기
+    res.status(200).json({
+      lists: items,
+      totalDatas,
+      totalPages
+    });
   } catch (err) {
     res.status(400).json({ errorMessage: '리스트 조회에 실패하였습니다.' });
   }
@@ -176,7 +190,7 @@ router.put('/:listId/isDone', async (req, res) => {
     // 3. 리스트 상태변경 체크
     if (updatedResult[0] !== 1) {
       res
-        .status(500)
+        .status(400)
         .json({ errorMessage: '리스트 상태변경이 실패하였습니다.' });
     }
 
@@ -187,7 +201,7 @@ router.put('/:listId/isDone', async (req, res) => {
       res.status(200).json({ message: 'List 완료 취소!' });
     }
   } catch (err) {
-    res.status(400).json({ errorMessage: '오류가 발생하였습니다.' });
+    res.status(500).json({ errorMessage: '오류가 발생하였습니다.' });
     return;
   }
 });
