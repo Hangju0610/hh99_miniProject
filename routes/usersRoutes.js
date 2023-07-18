@@ -97,14 +97,14 @@ router.post('/login', async (req, res) => {
 
     res
       .status(200)
-      .set({
-        accessToken: `Bearer ${accessToken}`,
-        refreshToken: `Bearer ${refreshToken}`,
-      })
+      // .set({
+      //   accessToken: `Bearer ${accessToken}`,
+      //   refreshToken: `Bearer ${refreshToken}`,
+      // })
       .json({
         message: '로그인 성공!',
-        // accessToken: `Bearer ${accessToken}`,
-        // refreshToken: `Bearer ${refreshToken}`,
+        accessToken: `Bearer ${accessToken}`,
+        refreshToken: `Bearer ${refreshToken}`,
       });
   } catch (err) {
     console.log(err);
