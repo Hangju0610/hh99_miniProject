@@ -34,6 +34,8 @@ const jwtValidation = async (req, res, next) => {
     // 쿠키 받아오기
     console.log(req.headers);
     const { accessToken, refreshToken } = req.headers;
+    console.log(accessToken);
+    console.log(refreshToken);
     // const { accessToken, refreshToken } = req.cookies;
     // 토큰 타입 확인하기
     const [accessTokenType, accToken] = (accessToken ?? '').split(' ');
@@ -42,6 +44,7 @@ const jwtValidation = async (req, res, next) => {
     if (accessTokenType !== 'Bearer' || refreshTokenType !== 'Bearer') {
       res.clearCookie('accessToken');
       res.clearCookie('refreshToken');
+      console.log(1);
       return res
         .status(403)
         .json({ errorMessage: '로그인이 필요한 기능입니다.' });
@@ -55,6 +58,7 @@ const jwtValidation = async (req, res, next) => {
     if (!validateRefreshTokenData) {
       res.clearCookie('accessToken');
       res.clearCookie('refreshToken');
+      console.log(2);
       return res
         .status(403)
         .json({ errorMessage: '로그인이 필요한 기능입니다.' });
@@ -70,6 +74,7 @@ const jwtValidation = async (req, res, next) => {
       if (!findUser) {
         res.clearCookie('accessToken');
         res.clearCookie('refreshToken');
+        console.log(3);
         return res
           .status(403)
           .json({ errorMessage: '로그인이 필요한 기능입니다.' });
@@ -87,6 +92,7 @@ const jwtValidation = async (req, res, next) => {
       if (!user) {
         res.clearCookie('accessToken');
         res.clearCookie('refreshToken');
+        console.log(4);
         return res
           .status(403)
           .json({ errorMessage: '로그인이 필요한 기능입니다.' });
@@ -114,6 +120,7 @@ const jwtValidation = async (req, res, next) => {
       if (!user) {
         res.clearCookie('accessToken');
         res.clearCookie('refreshToken');
+        console.log(5);
         return res
           .status(403)
           .json({ errorMessage: '로그인이 필요한 기능입니다.' });
