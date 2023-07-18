@@ -10,7 +10,7 @@ env.config();
 app.use(
   cors({
     // process.env 적용이 잘 안되어서 오류 발생
-    origin: '*',
+    origin: 'http://localhost:3000',
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
     credentials: true,
   })
