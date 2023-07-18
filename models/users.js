@@ -1,7 +1,7 @@
 'use strict';
 const { Model } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
-  class Lists extends Model {
+  class Users extends Model {
     /**
      * Helper method for defining associations.
      * This method is not a part of Sequelize lifecycle.
@@ -9,54 +9,38 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-      this.belongsTo(models.Users, {
+      this.hasMany(models.Lists, {
+        sourceKey: 'userId',
         foreignKey: 'userId',
-        targetKey: 'userId',
-        onDelete: 'CASCAED',
-        onUpdate: 'CASCAED',
+      });
+      this.hasOne(models.RefreshTokens, {
+        sourceKey: 'userId',
+        foreignKey: 'userId',
       });
     }
   }
-  Lists.init(
+  Users.init(
     {
-      listId: {
+      userId: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: DataTypes.INTEGER,
       },
-      userId: {
-        allowNull: false,
-        type: DataTypes.INTEGER,
-      },
-      title: {
+      email: {
         allowNull: false,
         type: DataTypes.STRING,
       },
-      content: {
+      password: {
         allowNull: false,
         type: DataTypes.STRING,
-      },
-      isDone: {
-        allowNull: false,
-        type: DataTypes.BOOLEAN,
-        defaultValue: false,
-      },
-      createdAt: {
-        allowNull: false,
-        type: DataTypes.DATE,
-        defaultValue: DataTypes.NOW,
-      },
-      updatedAt: {
-        allowNull: false,
-        type: DataTypes.DATE,
-        defaultValue: DataTypes.NOW,
       },
     },
     {
       sequelize,
-      modelName: 'Lists',
+      modelName: 'Users',
+      timestamps: false,
     }
   );
-  return Lists;
+  return Users;
 };

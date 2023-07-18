@@ -1,26 +1,39 @@
 const express = require('express');
 const { Lists } = require('../models');
 const router = express.Router();
+const authMiddleware = require('../middlewares/auth-middleware');
+const { Op } = require('sequelize');
 
 // List 전체 조회
-router.get('', async (req, res) => {
+router.get('', authMiddleware, async (req, res) => {
   console.log('List 전체 조회 API에 접속했습니다.');
   try {
+    const { userId } = res.locals.user;
     // 1. page, pageSize 받기 via req.query
     const page = parseInt(req.query.page) || 1;
     const pageSize = parseInt(req.query.pageSize) || 10;
     // 2. ToDolist 총 데이터 항목 수(totalDatas)
-    const totalDatas = await Lists.count();
+    const totalDatas = await Lists.count({ raw: true });
     // 3. 전체 페이지 수(totalPages)
     const totalPages = Math.ceil(totalDatas / pageSize);
 
-    // 3-1 totalPage수 보다 큰 page 수를 입력한 경우
+    // 3-1 totalData가 0인 경우
+    if (totalDatas === 0) {
+      return res.status(200).json({
+        lists: [],
+        totalDatas,
+        totalPages,
+      });
+    }
+
+    // 3-2 totalPage수 보다 큰 page 수를 입력한 경우
     if (page > totalPages)
       return res.status(404).json({ errorMessage: '없는 페이지입니다.' });
     // 4. sequelize를 통해 전체 조회(LIMIT, OFFSET 적용)
     const items = await Lists.findAll({
       // 5. 데이터 손질
-      attributes: { exclude: ['content'] },
+      where: { userId: userId },
+      attributes: { exclude: ['userId', 'content'] },
       limit: pageSize,
       offset: (page - 1) * pageSize,
       order: [['listId', 'DESC']],
@@ -32,18 +45,23 @@ router.get('', async (req, res) => {
       totalPages,
     });
   } catch (err) {
+    console.log(err);
     res.status(400).json({ errorMessage: '리스트 조회에 실패하였습니다.' });
   }
 });
 
 // List 상세 페이지 조회
 // detail 페이지로 접근하기 위해 수정
-router.get('/detail/:listId', async (req, res) => {
+router.get('/detail/:listId', authMiddleware, async (req, res) => {
   console.log('List 상세 페이지 조회 API에 접속했습니다.');
   try {
     const { listId } = req.params;
+    const { userId } = res.locals.user;
     // 1. 데이터 조회
-    const isExistList = await Lists.findOne({ where: { listId: listId } });
+    // 다른 사람이 못보게 Op.and로 처리
+    const isExistList = await Lists.findOne({
+      where: { [Op.and]: [{ listId }, { userId }] },
+    });
 
     // 1-1 데이터가 없는 경우 에러 출력
     if (!isExistList) {
@@ -70,9 +88,10 @@ router.get('/detail/:listId', async (req, res) => {
 });
 
 // List 생성
-router.post('', async (req, res) => {
+router.post('', authMiddleware, async (req, res) => {
   console.log('List 생성 API에 접속했습니다.');
   const { title, content } = req.body;
+  const { userId } = res.locals.user;
   try {
     // 1. req.body 데이터 유효성 검사
     if (!title || !content) {
@@ -83,6 +102,7 @@ router.post('', async (req, res) => {
     }
     // 2. DB에 데이터 입력
     await Lists.create({
+      userId: userId,
       title: title,
       content: content,
     });
@@ -94,13 +114,17 @@ router.post('', async (req, res) => {
 });
 
 // List 상세 페이지 수정
-router.put('/detail/:listId', async (req, res) => {
+router.put('/detail/:listId', authMiddleware, async (req, res) => {
   console.log('List 상세 페이지 수정 API에 접속했습니다.');
   const { title, content } = req.body;
   const { listId } = req.params;
+  const { userId } = res.locals.user;
   try {
     // 1. 데이터 조회
-    const isExistList = await Lists.findOne({ where: { listId } });
+    // 다른 사람이 못보게 Op.and로 처리
+    const isExistList = await Lists.findOne({
+      where: { [Op.and]: [{ listId }, { userId }] },
+    });
 
     // 1-1 데이터가 없는 경우 에러 출력
     if (!isExistList) {
@@ -138,11 +162,15 @@ router.put('/detail/:listId', async (req, res) => {
 });
 
 // List 삭제
-router.delete('/:listId', async (req, res) => {
+router.delete('/:listId', authMiddleware, async (req, res) => {
   try {
-    // 1. list 데이터 조회
     const { listId } = req.params;
-    const isExistList = await Lists.findOne({ where: { listId } });
+    const { userId } = res.locals.user;
+    // 1. 데이터 조회
+    // 다른 사람이 못보게 Op.and로 처리
+    const isExistList = await Lists.findOne({
+      where: { [Op.and]: [{ listId }, { userId }] },
+    });
 
     // 1-1 list 데이터 없는 경우 에러
     if (!isExistList) {
@@ -169,12 +197,17 @@ router.delete('/:listId', async (req, res) => {
 });
 
 // List 완료
-router.put('/:listId/isDone', async (req, res) => {
+router.put('/:listId/isDone', authMiddleware, async (req, res) => {
   // 2-1
   const { listId } = req.params;
+  const { userId } = res.locals.user;
   try {
-    // 1. list 데이터 조회
-    const isExistList = await Lists.findOne({ where: { listId } });
+    // 1. 데이터 조회
+    // 다른 사람이 못보게 Op.and로 처리
+    const isExistList = await Lists.findOne({
+      where: { [Op.and]: [{ listId }, { userId }] },
+      raw: true,
+    });
 
     // 1-1 데이터 없는 경우 에러 발생
     if (!isExistList) {
@@ -199,7 +232,7 @@ router.put('/:listId/isDone', async (req, res) => {
     }
 
     // 4. 데이터 변경 완료 판단여부
-    if (isExistList.isDone) {
+    if (updatedisDone) {
       res.status(200).json({ message: 'List 완료!' });
     } else {
       res.status(200).json({ message: 'List 완료 취소!' });

@@ -1,15 +1,11 @@
 const express = require('express');
-// const cookieParser = require("cookie-parser");
+const cookieParser = require('cookie-parser');
 const app = express();
 const indexRouter = require('./routes/indexRoutes.js');
 const env = require('dotenv');
 const morgan = require('morgan');
 const cors = require('cors');
 env.config();
-
-console.log(process.env.origin);
-
-// const origin = process.env.ORIGIN;
 
 app.use(
   cors({
@@ -19,13 +15,11 @@ app.use(
     credentials: true,
   })
 );
-// test용
-// console.log(origin);
 
 app.use(morgan('dev'));
 
 app.use(express.json());
-// app.use(cookieParser())
+app.use(cookieParser());
 app.use('/api', indexRouter);
 
 app.get('/', (req, res) => {

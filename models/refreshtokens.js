@@ -1,7 +1,7 @@
 'use strict';
 const { Model } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
-  class Lists extends Model {
+  class RefreshTokens extends Model {
     /**
      * Helper method for defining associations.
      * This method is not a part of Sequelize lifecycle.
@@ -17,46 +17,23 @@ module.exports = (sequelize, DataTypes) => {
       });
     }
   }
-  Lists.init(
+  RefreshTokens.init(
     {
-      listId: {
+      userId: {
         allowNull: false,
-        autoIncrement: true,
         primaryKey: true,
         type: DataTypes.INTEGER,
       },
-      userId: {
-        allowNull: false,
-        type: DataTypes.INTEGER,
-      },
-      title: {
+      refreshToken: {
         allowNull: false,
         type: DataTypes.STRING,
-      },
-      content: {
-        allowNull: false,
-        type: DataTypes.STRING,
-      },
-      isDone: {
-        allowNull: false,
-        type: DataTypes.BOOLEAN,
-        defaultValue: false,
-      },
-      createdAt: {
-        allowNull: false,
-        type: DataTypes.DATE,
-        defaultValue: DataTypes.NOW,
-      },
-      updatedAt: {
-        allowNull: false,
-        type: DataTypes.DATE,
-        defaultValue: DataTypes.NOW,
       },
     },
     {
       sequelize,
-      modelName: 'Lists',
+      modelName: 'RefreshTokens',
+      timestamps: false,
     }
   );
-  return Lists;
+  return RefreshTokens;
 };
