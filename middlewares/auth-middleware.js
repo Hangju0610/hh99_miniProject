@@ -32,6 +32,7 @@ const validateRefreshToken = function (refreshToken) {
 const jwtValidation = async (req, res, next) => {
   try {
     // 쿠키 받아오기
+    console.log(req.header);
     const { accessToken, refreshToken } = req.cookies;
     // 토큰 타입 확인하기
     const [accessTokenType, accToken] = (accessToken ?? '').split(' ');
