@@ -16,7 +16,7 @@ router.post('/signup', async (req, res) => {
 
     // 동일 이메일이 있는 경우
     if (isExistUser)
-      return res.status(403).json({ errorMessage: '존재하는 Eamil입니다.' });
+      return res.status(412).json({ errorMessage: '존재하는 Eamil입니다.' });
 
     // 비밀번호 암호화
     const salt = await bcrypt.genSalt(parseInt(process.env.BCRYPT_SALT));
@@ -31,7 +31,7 @@ router.post('/signup', async (req, res) => {
     res.status(201).json({ message: '회원가입 완료!' });
   } catch (err) {
     console.log(err);
-    res.status(400).json({ errorMessage: '오류가 발생하였습니다.' });
+    res.status(400).json({ errorMessage: '회원가입에 실패했습니다.' });
   }
 });
 
@@ -44,21 +44,21 @@ router.post('/login', async (req, res) => {
     const findUser = await Users.findOne({ where: { email } });
     if (!findUser)
       return res
-        .status(400)
+        .status(412)
         .json({ errorMessage: '이메일 혹은 비밀번호를 확인해주세요.' });
 
     // 비밀번호 일치 확인
     const validPassword = await bcrypt.compare(password, findUser.password);
     if (!validPassword)
       return res
-        .status(400)
+        .status(412)
         .json({ errorMessage: '이메일 혹은 비밀번호를 확인해주세요.' });
 
     // JWT accessToken 발급
     const accessToken = jwt.sign(
       { userId: findUser.userId },
       process.env.JWT_ACCESS,
-      { expiresIn: '10s' }
+      { expiresIn: '1m' }
     );
     // JWT RefrshToken 발급
     const refreshToken = jwt.sign({}, process.env.JWT_REFRESH, {
@@ -79,6 +79,11 @@ router.post('/login', async (req, res) => {
     } else {
       await RefreshTokens.create({ userId: findUser.userId, refreshToken });
     }
+    // 토큰 보내기 전 옵션 설정
+    const options = {
+      sameSite: 'none',
+      secure: false,
+    };
     // 토큰 보내기
     res.cookie('accessToken', `Bearer ${accessToken}`);
     res.cookie('refreshToken', `Bearer ${refreshToken}`);

@@ -13,7 +13,7 @@ router.get('', authMiddleware, async (req, res) => {
     const page = parseInt(req.query.page) || 1;
     const pageSize = parseInt(req.query.pageSize) || 10;
     // 2. ToDolist 총 데이터 항목 수(totalDatas)
-    const totalDatas = await Lists.count({ raw: true });
+    const totalDatas = await Lists.count({ where: { userId }, raw: true });
     // 3. 전체 페이지 수(totalPages)
     const totalPages = Math.ceil(totalDatas / pageSize);
 
@@ -29,6 +29,7 @@ router.get('', authMiddleware, async (req, res) => {
     // 3-2 totalPage수 보다 큰 page 수를 입력한 경우
     if (page > totalPages)
       return res.status(404).json({ errorMessage: '없는 페이지입니다.' });
+
     // 4. sequelize를 통해 전체 조회(LIMIT, OFFSET 적용)
     const items = await Lists.findAll({
       // 5. 데이터 손질

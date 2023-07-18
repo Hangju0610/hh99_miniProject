@@ -38,9 +38,11 @@ const jwtValidation = async (req, res, next) => {
     const [refreshTokenType, refToken] = (refreshToken ?? '').split(' ');
 
     if (accessTokenType !== 'Bearer' || refreshTokenType !== 'Bearer') {
+      res.clearcookie('accessToken');
+      res.clearcookie('refreshToken');
       return res
         .status(403)
-        .json({ errorMessage: '토큰 타입이 일치하지 않습니다.' });
+        .json({ errorMessage: '로그인이 필요한 기능입니다.' });
     }
 
     // 토큰 검사
@@ -49,6 +51,8 @@ const jwtValidation = async (req, res, next) => {
 
     //refreshToken이 만료된 경우
     if (!validateRefreshTokenData) {
+      res.clearcookie('accessToken');
+      res.clearcookie('refreshToken');
       return res
         .status(403)
         .json({ errorMessage: '로그인이 필요한 기능입니다.' });
@@ -62,9 +66,11 @@ const jwtValidation = async (req, res, next) => {
       });
       // 탈취를 당했거나, 고의적으로 만료된 경우
       if (!findUser) {
+        res.clearcookie('accessToken');
+        res.clearcookie('refreshToken');
         return res
           .status(403)
-          .json({ errorMessage: '전달된 쿠키에서 에러가 발생했습니다.' });
+          .json({ errorMessage: '로그인이 필요한 기능입니다.' });
       }
 
       // AccessToken 새로 생성
@@ -72,14 +78,16 @@ const jwtValidation = async (req, res, next) => {
       const newAccessToken = jwt.sign(
         { userId: findUser.userId },
         process.env.JWT_ACCESS,
-        { expiresIn: '10s' }
+        { expiresIn: '1m' }
       );
       // user 찾기
       const user = await Users.findOne({ where: { userId: findUser.userId } });
       if (!user) {
+        res.clearcookie('accessToken');
+        res.clearcookie('refreshToken');
         return res
           .status(403)
-          .json({ errorMessage: '토큰 사용자가 존재하지 않습니다.' });
+          .json({ errorMessage: '로그인이 필요한 기능입니다.' });
       }
 
       res.cookie('accessToken', `Bearer ${newAccessToken}`);
@@ -93,9 +101,11 @@ const jwtValidation = async (req, res, next) => {
       });
 
       if (!user) {
+        res.clearcookie('accessToken');
+        res.clearcookie('refreshToken');
         return res
           .status(403)
-          .json({ errorMessage: '토큰 사용자가 존재하지 않습니다.' });
+          .json({ errorMessage: '로그인이 필요한 기능입니다.' });
       }
 
       res.locals.user = user;
@@ -103,7 +113,9 @@ const jwtValidation = async (req, res, next) => {
     }
   } catch (error) {
     console.log(error);
-    res.status(400).json({ errorMessage });
+    res.clearcookie('accessToken');
+    res.clearcookie('refreshToken');
+    res.status(400).json({ errorMessage: '로그인이 필요한 기능입니다.' });
   }
 };
 
