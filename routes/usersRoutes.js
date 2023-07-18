@@ -58,27 +58,27 @@ router.post('/login', async (req, res) => {
     const accessToken = jwt.sign(
       { userId: findUser.userId },
       process.env.JWT_ACCESS,
-      { expiresIn: '1m' }
+      { expiresIn: '2h' }
     );
     // JWT RefrshToken 발급
-    const refreshToken = jwt.sign({}, process.env.JWT_REFRESH, {
-      expiresIn: '3h',
-    });
+    // const refreshToken = jwt.sign({}, process.env.JWT_REFRESH, {
+    //   expiresIn: '3h',
+    // });
 
     // refreshToken DB에 전달
-    const findRefreshToken = await RefreshTokens.findOne({
-      where: { userId: findUser.userId },
-    });
-    // Db에 토큰이 이미 저장되어 있다면
-    if (findRefreshToken) {
-      await RefreshTokens.update(
-        { refreshToken },
-        { where: { userId: findUser.userId } }
-      );
-      // DB에 토큰이 없다면
-    } else {
-      await RefreshTokens.create({ userId: findUser.userId, refreshToken });
-    }
+    // const findRefreshToken = await RefreshTokens.findOne({
+    //   where: { userId: findUser.userId },
+    // });
+    // // Db에 토큰이 이미 저장되어 있다면
+    // if (findRefreshToken) {
+    //   await RefreshTokens.update(
+    //     { refreshToken },
+    //     { where: { userId: findUser.userId } }
+    //   );
+    //   // DB에 토큰이 없다면
+    // } else {
+    //   await RefreshTokens.create({ userId: findUser.userId, refreshToken });
+    // }
     // 토큰 보내기 전 옵션 설정
     // const options = {
     //   domain: 'localhost',
@@ -95,17 +95,12 @@ router.post('/login', async (req, res) => {
     // res.cookie('accessToken', `Bearer ${accessToken}`, options);
     // res.cookie('refreshToken', `Bearer ${refreshToken}`, options);
 
-    res
-      .status(200)
-      // .set({
-      //   accessToken: `Bearer ${accessToken}`,
-      //   refreshToken: `Bearer ${refreshToken}`,
-      // })
-      .json({
-        message: '로그인 성공!',
-        accessToken: `Bearer ${accessToken}`,
-        refreshToken: `Bearer ${refreshToken}`,
-      });
+    res.set('Authorization', `Bearer ${accessToken}`);
+    res.status(200).json({
+      message: '로그인 성공!',
+      // 'Authorization': `Bearer ${accessToken}`,
+      // refreshToken: `Bearer ${refreshToken}`,
+    });
   } catch (err) {
     console.log(err);
     res.status(400).json({ errorMessage: '오류가 발생하였습니다.' });

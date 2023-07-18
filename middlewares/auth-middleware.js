@@ -33,17 +33,17 @@ const jwtValidation = async (req, res, next) => {
   try {
     // 쿠키 받아오기
     console.log(req.headers);
-    const { accesstoken, refreshtoken } = req.headers;
-    console.log(accesstoken);
-    console.log(refreshtoken);
+    const { Authorization } = req.headers;
+    // console.log(accesstoken);
+    // console.log(refreshtoken);
     // const { accessToken, refreshToken } = req.cookies;
     // 토큰 타입 확인하기
-    const [accessTokenType, accToken] = (accesstoken ?? '').split(' ');
-    const [refreshTokenType, refToken] = (refreshtoken ?? '').split(' ');
+    const [accessTokenType, accessToken] = (Authorization ?? '').split(' ');
+    // const [refreshTokenType, refToken] = (refreshtoken ?? '').split(' ');
 
-    if (accessTokenType !== 'Bearer' || refreshTokenType !== 'Bearer') {
-      res.clearCookie('accessToken');
-      res.clearCookie('refreshToken');
+    if (accessTokenType !== 'Bearer') {
+      res.clearCookie('Authorization');
+      // res.clearCookie('refreshToken');
       console.log(1);
       return res
         .status(403)
@@ -51,89 +51,100 @@ const jwtValidation = async (req, res, next) => {
     }
 
     // 토큰 검사
-    const validateAccessTokenData = validateAccessToken(accToken);
-    const validateRefreshTokenData = validateRefreshToken(refToken);
+    const validateAccessTokenData = validateAccessToken(accessToken);
+    // const validateRefreshTokenData = validateRefreshToken(refToken);
 
-    //refreshToken이 만료된 경우
-    if (!validateRefreshTokenData) {
-      res.clearCookie('accessToken');
-      res.clearCookie('refreshToken');
-      console.log(2);
+    // AccessToken 만료된 경우
+    if (!validateAccessTokenData) {
+      return res.status(403).json({ errorMessage: '로그인이 필요합니다.' });
+    }
+    const user = await Users.findOne({
+      where: { userId: validateAccessTokenData.userId },
+    });
+
+    if (!user) {
       return res
         .status(403)
         .json({ errorMessage: '로그인이 필요한 기능입니다.' });
     }
 
+    res.locals.user = user;
+    next();
+
+    //refreshToken이 만료된 경우
+    // if (!validateRefreshTokenData) {
+    //   console.log(2);
+    //   return res
+    //     .status(403)
+    //     .json({ errorMessage: '로그인이 필요한 기능입니다.' });
+    // }
+
     //accessToken이 만료된 경우
-    if (!validateAccessTokenData) {
-      // DB에서 refresh 토큰 검증하기
-      const findUser = await RefreshTokens.findOne({
-        where: { refreshToken: refToken },
-      });
-      // 탈취를 당했거나, 고의적으로 만료된 경우
-      if (!findUser) {
-        res.clearCookie('accessToken');
-        res.clearCookie('refreshToken');
-        console.log(3);
-        return res
-          .status(403)
-          .json({ errorMessage: '로그인이 필요한 기능입니다.' });
-      }
+    // if (!validateAccessTokenData) {
+    //   // DB에서 refresh 토큰 검증하기
+    //   const findUser = await RefreshTokens.findOne({
+    //     where: { refreshToken: refToken },
+    //   });
+    //   // 탈취를 당했거나, 고의적으로 만료된 경우
+    //   if (!findUser) {
+    //     res.clearCookie('accessToken');
+    //     res.clearCookie('refreshToken');
+    //     console.log(3);
+    //     return res
+    //       .status(403)
+    //       .json({ errorMessage: '로그인이 필요한 기능입니다.' });
+    //   }
 
-      // AccessToken 새로 생성
-      console.log('AccessToken 재발급');
-      const newAccessToken = jwt.sign(
-        { userId: findUser.userId },
-        process.env.JWT_ACCESS,
-        { expiresIn: '1m' }
-      );
-      // user 찾기
-      const user = await Users.findOne({ where: { userId: findUser.userId } });
-      if (!user) {
-        res.clearCookie('accessToken');
-        res.clearCookie('refreshToken');
-        console.log(4);
-        return res
-          .status(403)
-          .json({ errorMessage: '로그인이 필요한 기능입니다.' });
-      }
+    //   // AccessToken 새로 생성
+    //   console.log('AccessToken 재발급');
+    //   const newAccessToken = jwt.sign(
+    //     { userId: findUser.userId },
+    //     process.env.JWT_ACCESS,
+    //     { expiresIn: '1m' }
+    //   );
+    //   // user 찾기
+    //   const user = await Users.findOne({ where: { userId: findUser.userId } });
+    //   if (!user) {
+    //     res.clearCookie('accessToken');
+    //     res.clearCookie('refreshToken');
+    //     console.log(4);
+    //     return res
+    //       .status(403)
+    //       .json({ errorMessage: '로그인이 필요한 기능입니다.' });
+    //   }
 
-      // const options = {
-      //   domain: 'localhost',
-      //   path: '/',
-      //   sameSite: 'none',
-      //   secure: false,
-      // };
-      // res.cookie('accessToken', `Bearer ${accessToken}`, options);
+    //   // const options = {
+    //   //   domain: 'localhost',
+    //   //   path: '/',
+    //   //   sameSite: 'none',
+    //   //   secure: false,
+    //   // };
+    //   // res.cookie('accessToken', `Bearer ${accessToken}`, options);
 
-      res.set('accessToken', `Bearer ${newAccessToken}`);
-      console.log(res.headers);
-      // res.json({ accessToken: `Bearer ${newAccessToken}` });
-      res.locals.user = user;
-      next();
-    } else {
-      // accessToken도 정상인 경우
-      console.log('정상적인 경우');
-      const user = await Users.findOne({
-        where: { userId: validateAccessTokenData.userId },
-      });
+    //   res.set('accessToken', `Bearer ${newAccessToken}`);
+    //   console.log(res.headers);
+    //   // res.json({ accessToken: `Bearer ${newAccessToken}` });
+    //   res.locals.user = user;
+    //   next();
+    // } else {
+    //   // accessToken도 정상인 경우
+    //   console.log('정상적인 경우');
+    //   const user = await Users.findOne({
+    //     where: { userId: validateAccessTokenData.userId },
+    //   });
 
-      if (!user) {
-        res.clearCookie('accessToken');
-        res.clearCookie('refreshToken');
-        console.log(5);
-        return res
-          .status(403)
-          .json({ errorMessage: '로그인이 필요한 기능입니다.' });
-      }
+    //   if (!user) {
+    //     console.log(5);
+    //     return res
+    //       .status(403)
+    //       .json({ errorMessage: '로그인이 필요한 기능입니다.' });
+    //   }
 
-      res.locals.user = user;
-      next();
-    }
+    //   res.locals.user = user;
+    //   next();
+    // }
   } catch (error) {
     console.log(error);
-    res.clearCookie('accessToken');
-    res.clearCookie('refreshToken');
     res.status(400).json({ errorMessage: '로그인이 필요한 기능입니다.' });
   }
 };
