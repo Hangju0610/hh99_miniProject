@@ -85,8 +85,8 @@ router.post('/login', async (req, res) => {
       secure: false,
     };
     // 토큰 보내기
-    res.cookie('accessToken', `Bearer ${accessToken}`);
-    res.cookie('refreshToken', `Bearer ${refreshToken}`);
+    res.cookie('accessToken', `Bearer ${accessToken}`, options);
+    res.cookie('refreshToken', `Bearer ${refreshToken}`, options);
 
     res.status(200).json({ message: '로그인 성공!' });
   } catch (err) {

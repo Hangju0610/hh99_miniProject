@@ -90,7 +90,12 @@ const jwtValidation = async (req, res, next) => {
           .json({ errorMessage: '로그인이 필요한 기능입니다.' });
       }
 
-      res.cookie('accessToken', `Bearer ${newAccessToken}`);
+      const options = {
+        sameSite: 'none',
+        secure: false,
+      };
+
+      res.cookie('accessToken', `Bearer ${newAccessToken}`, options);
       res.locals.user = user;
       next();
     } else {
@@ -113,8 +118,8 @@ const jwtValidation = async (req, res, next) => {
     }
   } catch (error) {
     console.log(error);
-    res.clearcookie('accessToken');
-    res.clearcookie('refreshToken');
+    res.clearCookie('accessToken');
+    res.clearCookie('refreshToken');
     res.status(400).json({ errorMessage: '로그인이 필요한 기능입니다.' });
   }
 };
