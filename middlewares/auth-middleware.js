@@ -38,8 +38,8 @@ const jwtValidation = async (req, res, next) => {
     const [refreshTokenType, refToken] = (refreshToken ?? '').split(' ');
 
     if (accessTokenType !== 'Bearer' || refreshTokenType !== 'Bearer') {
-      res.clearcookie('accessToken');
-      res.clearcookie('refreshToken');
+      res.clearCookie('accessToken');
+      res.clearCookie('refreshToken');
       return res
         .status(403)
         .json({ errorMessage: '로그인이 필요한 기능입니다.' });
@@ -51,8 +51,8 @@ const jwtValidation = async (req, res, next) => {
 
     //refreshToken이 만료된 경우
     if (!validateRefreshTokenData) {
-      res.clearcookie('accessToken');
-      res.clearcookie('refreshToken');
+      res.clearCookie('accessToken');
+      res.clearCookie('refreshToken');
       return res
         .status(403)
         .json({ errorMessage: '로그인이 필요한 기능입니다.' });
@@ -66,8 +66,8 @@ const jwtValidation = async (req, res, next) => {
       });
       // 탈취를 당했거나, 고의적으로 만료된 경우
       if (!findUser) {
-        res.clearcookie('accessToken');
-        res.clearcookie('refreshToken');
+        res.clearCookie('accessToken');
+        res.clearCookie('refreshToken');
         return res
           .status(403)
           .json({ errorMessage: '로그인이 필요한 기능입니다.' });
@@ -83,8 +83,8 @@ const jwtValidation = async (req, res, next) => {
       // user 찾기
       const user = await Users.findOne({ where: { userId: findUser.userId } });
       if (!user) {
-        res.clearcookie('accessToken');
-        res.clearcookie('refreshToken');
+        res.clearCookie('accessToken');
+        res.clearCookie('refreshToken');
         return res
           .status(403)
           .json({ errorMessage: '로그인이 필요한 기능입니다.' });
@@ -101,8 +101,8 @@ const jwtValidation = async (req, res, next) => {
       });
 
       if (!user) {
-        res.clearcookie('accessToken');
-        res.clearcookie('refreshToken');
+        res.clearCookie('accessToken');
+        res.clearCookie('refreshToken');
         return res
           .status(403)
           .json({ errorMessage: '로그인이 필요한 기능입니다.' });
