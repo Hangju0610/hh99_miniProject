@@ -80,13 +80,15 @@ router.post('/login', async (req, res) => {
       await RefreshTokens.create({ userId: findUser.userId, refreshToken });
     }
     // 토큰 보내기 전 옵션 설정
-    const options = {
-      sameSite: 'none',
-      secure: false,
-    };
+    // const options = {
+    //   sameSite: 'none',
+    //   secure: false,
+    // };
     // 토큰 보내기
-    res.cookie('accessToken', `Bearer ${accessToken}`, options);
-    res.cookie('refreshToken', `Bearer ${refreshToken}`, options);
+    res.set('accessToken', `Bearer ${accessToken}`);
+    res.set('refreshToken', `Bearer ${refreshToken}`);
+    // res.cookie('accessToken', `Bearer ${accessToken}`, options);
+    // res.cookie('refreshToken', `Bearer ${refreshToken}`, options);
 
     res.status(200).json({ message: '로그인 성공!' });
   } catch (err) {
