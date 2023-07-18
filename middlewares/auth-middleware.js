@@ -95,7 +95,8 @@ const jwtValidation = async (req, res, next) => {
       //   secure: false,
       // };
 
-      res.set('accessToken', `Bearer ${accessToken}`);
+      // res.set('accessToken', `Bearer ${accessToken}`);
+      res.json({ accessToken: `Bearer ${accessToken}` });
       res.locals.user = user;
       next();
     } else {
