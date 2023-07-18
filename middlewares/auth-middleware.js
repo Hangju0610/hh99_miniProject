@@ -106,8 +106,9 @@ const jwtValidation = async (req, res, next) => {
       // };
       // res.cookie('accessToken', `Bearer ${accessToken}`, options);
 
-      // res.set('accessToken', `Bearer ${accessToken}`);
-      res.json({ accessToken: `Bearer ${newAccessToken}` });
+      res.set('accessToken', `Bearer ${newAccessToken}`);
+      console.log(res.headers);
+      // res.json({ accessToken: `Bearer ${newAccessToken}` });
       res.locals.user = user;
       next();
     } else {
