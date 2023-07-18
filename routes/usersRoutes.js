@@ -95,10 +95,10 @@ router.post('/login', async (req, res) => {
     // res.cookie('accessToken', `Bearer ${accessToken}`, options);
     // res.cookie('refreshToken', `Bearer ${refreshToken}`, options);
 
-    res.set('Authorization', `Bearer ${accessToken}`);
+    // res.set('Authorization', `Bearer ${accessToken}`);
     res.status(200).json({
       message: '로그인 성공!',
-      // 'Authorization': `Bearer ${accessToken}`,
+      Authorization: `Bearer ${accessToken}`,
       // refreshToken: `Bearer ${refreshToken}`,
     });
   } catch (err) {

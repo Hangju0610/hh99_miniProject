@@ -33,12 +33,12 @@ const jwtValidation = async (req, res, next) => {
   try {
     // 쿠키 받아오기
     console.log(req.headers);
-    const { Authorization } = req.headers;
+    const { authorization } = req.headers;
     // console.log(accesstoken);
     // console.log(refreshtoken);
     // const { accessToken, refreshToken } = req.cookies;
     // 토큰 타입 확인하기
-    const [accessTokenType, accessToken] = (Authorization ?? '').split(' ');
+    const [accessTokenType, accessToken] = (authorization ?? '').split(' ');
     // const [refreshTokenType, refToken] = (refreshtoken ?? '').split(' ');
 
     if (accessTokenType !== 'Bearer') {
