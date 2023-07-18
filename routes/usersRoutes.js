@@ -87,15 +87,15 @@ router.post('/login', async (req, res) => {
     //   secure: false,
     // };
     // 토큰 보내기
-    // res.set('accessToken', `Bearer ${accessToken}`);
-    // res.set('refreshToken', `Bearer ${refreshToken}`);
+    res.set('accessToken', `Bearer ${accessToken}`);
+    res.set('refreshToken', `Bearer ${refreshToken}`);
     // res.cookie('accessToken', `Bearer ${accessToken}`, options);
     // res.cookie('refreshToken', `Bearer ${refreshToken}`, options);
 
     res.status(200).json({
       message: '로그인 성공!',
-      accessToken: `Bearer ${accessToken}`,
-      refreshToken: `Bearer ${refreshToken}`,
+      // accessToken: `Bearer ${accessToken}`,
+      // refreshToken: `Bearer ${refreshToken}`,
     });
   } catch (err) {
     console.log(err);
