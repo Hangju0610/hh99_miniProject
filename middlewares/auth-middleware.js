@@ -90,16 +90,16 @@ const jwtValidation = async (req, res, next) => {
           .json({ errorMessage: '로그인이 필요한 기능입니다.' });
       }
 
-      const options = {
-        domain: 'localhost',
-        path: '/',
-        sameSite: 'none',
-        secure: false,
-      };
-      res.cookie('accessToken', `Bearer ${accessToken}`, options);
+      // const options = {
+      //   domain: 'localhost',
+      //   path: '/',
+      //   sameSite: 'none',
+      //   secure: false,
+      // };
+      // res.cookie('accessToken', `Bearer ${accessToken}`, options);
 
       // res.set('accessToken', `Bearer ${accessToken}`);
-      // res.json({ accessToken: `Bearer ${accessToken}` });
+      res.json({ accessToken: `Bearer ${newAccessToken}` });
       res.locals.user = user;
       next();
     } else {
