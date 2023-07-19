@@ -32,7 +32,7 @@ const validateRefreshToken = function (refreshToken) {
 const jwtValidation = async (req, res, next) => {
   try {
     // 쿠키 받아오기
-    console.log(req.headers);
+    // console.log(req.headers);
     const { authorization } = req.headers;
     // console.log(accesstoken);
     // console.log(refreshtoken);

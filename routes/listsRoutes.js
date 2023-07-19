@@ -164,6 +164,7 @@ router.put('/detail/:listId', authMiddleware, async (req, res) => {
 
 // List 삭제
 router.delete('/:listId', authMiddleware, async (req, res) => {
+  console.log('List 삭제 API에 접속했습니다.');
   try {
     const { listId } = req.params;
     const { userId } = res.locals.user;
@@ -199,6 +200,7 @@ router.delete('/:listId', authMiddleware, async (req, res) => {
 
 // List 완료
 router.put('/:listId/isDone', authMiddleware, async (req, res) => {
+  console.log('List 완료 API에 접속했습니다.');
   // 2-1
   const { listId } = req.params;
   const { userId } = res.locals.user;
