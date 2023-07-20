@@ -70,6 +70,9 @@ router.get('/detail/:listId', authMiddleware, async (req, res) => {
       return;
     }
 
+    console.log(typeof isExistList.createdAt);
+    console.log(isExistList.createdAt);
+
     const sortList = {
       listId: String(isExistList.listId),
       title: isExistList.title,
