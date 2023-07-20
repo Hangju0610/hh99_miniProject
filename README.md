@@ -4,6 +4,10 @@
 
 주특기 주차에 배운 기술들을 집합하여 TodoList를 구현하였습니다.
 
+S.A 링크 : https://www.notion.so/hangjo0610/1-4b650011dc4046ae82411218ae6d7290
+
+서비스 링크 : [LeeEoPark ToDo](http://mini-project-jay.s3-website.ap-northeast-2.amazonaws.com/)
+
 ## 목표
 0. FE와 BE의 협업을 통해 실제 웹페이지를 구현, 배포하는 것
 1. Todolist의 List CRUD API 구현 및 페이지 구현
@@ -15,7 +19,7 @@
 3. ~~Passport social Login~~ (시간 부족으로 인한 패스)
 
 ## ERD
-
+![ERD](/miniproject.png)
 ## 기술 스택
 Programing Language
 
@@ -144,6 +148,9 @@ res.cookie와 res.set으로 Token을 클라이언트에 보내지 못하는 문�
 3. res.json으로 보내는 방법을 채택
 → Response로 보내고, FE 클라이언트에서 Header로 받아 인증 진행
 </details>
+
+자세한 내용은 Notion을 확인 부탁드립니다.
+Notion : https://www.notion.so/hangjo0610/1-4b650011dc4046ae82411218ae6d7290
 
 ## 팀원
 |이름|주특기|Github|
