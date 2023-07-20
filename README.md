@@ -8,6 +8,9 @@ S.A 링크 : https://www.notion.so/hangjo0610/1-4b650011dc4046ae82411218ae6d7290
 
 서비스 링크 : [LeeEoPark ToDo](http://mini-project-jay.s3-website.ap-northeast-2.amazonaws.com/)
 
+FE Repository : https://github.com/junho01052/miniproject-hh
+BE Repository : https://github.com/Hangju0610/hh99_miniProject
+
 ## 목표
 0. FE와 BE의 협업을 통해 실제 웹페이지를 구현, 배포하는 것
 1. Todolist의 List CRUD API 구현 및 페이지 구현
