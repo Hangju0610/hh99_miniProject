@@ -9,6 +9,7 @@ S.A 링크 : https://www.notion.so/hangjo0610/1-4b650011dc4046ae82411218ae6d7290
 서비스 링크 : [LeeEoPark ToDo](http://mini-project-jay.s3-website.ap-northeast-2.amazonaws.com/)
 
 FE Repository : https://github.com/junho01052/miniproject-hh
+
 BE Repository : https://github.com/Hangju0610/hh99_miniProject
 
 ## 목표
